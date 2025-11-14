@@ -4,13 +4,15 @@
 
 #include "interface.h"
 
-void initialising_array(char arr[][25]) {
+void initialising_array(state *status) {
     for(int a=0;a<24;a++) {
-        strcpy(arr[a],"........................");
+        for(int b=0;b<24;b++) {
+            (status->board)[a][b]=empty;
+        }
     }
 }
 
-void display(char arr[][25]) {
+void display(state *status) {
     printf("\n");
 
     printf("        ‖");
@@ -28,12 +30,12 @@ void display(char arr[][25]) {
     for(int a=0;a<87;a++) {printf(" ");}
     printf("‖\n");
 
-    printf("  1   ");
-    printf("%c ‖ %c ",arr[0][0],arr[0][1]);
+    printf("   1  ");
+    printf("  ‖ %c ",(status->board)[0][1]);
     for(int a=2;a<23;a++) {
-        printf("  %c ",arr[0][a]);
+        printf("  %c ",(status->board)[0][a]);
     }
-    printf("‖ %c   1\n",arr[0][23]);
+    printf("‖    1\n");
 
     printf("--------+");
     for(int a=1;a<88;a++) {
@@ -45,15 +47,13 @@ void display(char arr[][25]) {
 
 
     for(int a=1;a<23;a++) {
-        if(a>8) printf("  %d  %c ‖ ",a+1,arr[a][0]);
-        if(a<=8) printf("  %d   %c ‖ ",a+1,arr[a][0]);
+        printf("  %2d  %c ‖ ",a+1,(status->board)[a][0]);
         for(int b=1;b<22;b++) {
-            printf("%c   ",arr[a][b]);
+            printf("%c   ",(status->board)[a][b]);
         }
-        printf("%c ‖ ",arr[a][22]);
-        printf("%c",arr[a][23]);
-        if(a>8) printf("  %d\n",a+1);
-        if(a<=8) printf("   %d\n",a+1);
+        printf("%c ‖ ",(status->board)[a][22]);
+        printf("%c",(status->board)[a][23]);
+        printf("  %d\n",a+1);
         if(a<22) {
             printf("        ‖");
             for(int b=0;b<87;b++) {printf(" ");}
@@ -67,11 +67,11 @@ void display(char arr[][25]) {
     }
 
     printf("  24  ");
-    printf("%c ‖ %c ",arr[23][0],arr[23][1]);
+    printf("  ‖ %c ",(status->board)[23][1]);
     for(int a=2;a<23;a++) {
-        printf("  %c ",arr[23][a]);
+        printf("  %c ",(status->board)[23][a]);
     }
-    printf("‖ %c  24\n",arr[23][23]);
+    printf("‖    24\n");
 
     printf("        ‖");
     for(int a=0;a<87;a++) {printf(" ");}
@@ -90,48 +90,49 @@ void display(char arr[][25]) {
 
 }
 
-
-void scan_move_player1(char arr[][25],char name_player1[]) {
+void scan_move_player1(state *status,char name_player1[]) {
     char str[4];
-    printf("Play %s: ",name_player1);
+    printf("Play %s (O): ",name_player1);
     scanf("%s",str);
 
     recheck:
-    while(str[0]<'A' || str[0]>'X' || atoi(str+1)>24 || atoi(str+1)<1) {
+    while(str[0]<'A' || str[0]>'X' || atoi(str+1)>24 || atoi(str+1)<1 || 
+    (str[0]=='A' && (atoi(str+1)==1 || atoi(str+1)==24)) || (str[0]=='X' && (atoi(str+1)==1 || atoi(str+1)==24))) {
         printf("Incorrect move. Please re-enter your move again: ");
         scanf("%s",str);
     }
     int row=(int)(str[0]-'A');
     int col=atoi(str+1)-1;
 
-    if (arr[col][row]!='.') {
+    if ((status->board)[col][row]!='.') {
         printf("Box is not empty, Please re-enter your move again: ");
         scanf("%s",str);
         goto recheck;
     }
 
-    arr[col][row]='O';
+    (status->board)[col][row]=p1_peg;
 }
 
 
-void scan_move_player2(char arr[][25],char name_player2[]) {
+void scan_move_player2(state *status,char name_player2[]) {
     char str[4];
-    printf("Play %s: ",name_player2);
+    printf("Play %s (X): ",name_player2);
     scanf("%s",str);
 
     recheck:
-    while(str[0]<'A' || str[0]>'X' || atoi(str+1)>24 || atoi(str+1)<1) {
+    while(str[0]<'A' || str[0]>'X' || atoi(str+1)>24 || atoi(str+1)<1 || 
+    (str[0]=='A' && (atoi(str+1)==1 || atoi(str+1)==24)) || (str[0]=='X' && (atoi(str+1)==1 || atoi(str+1)==24))) {
         printf("Incorrect move. Please re-enter your move again: ");
         scanf("%s",str);
     }
     int row=(int)(str[0]-'A');
     int col=atoi(str+1)-1;
 
-    if (arr[col][row]!='.') {
+    if ((status->board)[col][row]!=empty) {
         printf("Box is not empty, Please re-enter your move again: ");
         scanf("%s",str);
         goto recheck;
     }
 
-    arr[col][row]='X';
+    (status->board)[col][row]=p2_peg;
 }

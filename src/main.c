@@ -38,27 +38,28 @@ int main() {
     printf("Prepare yourself, %s!\n",name2);
     printf("-----------------------------------------------------------------------------------------------------------\n\n");
     
-    char arr[24][25];
-    initialising_array(arr);
+    state status;
+    initialising_array(&status);
 
     while(1) {
         printf("--- Current Status ---\n");
-        display(arr);
+        display(&status);
         printf("*%s needs to touch both single stranded line.\n*%s needs to touch both double stranded line.\n",name1,name2);
         printf("Please use Ctrl+C to exit, since Game Logic is not ready.\n");            //To remove
-        scan_move_player1(arr,name1);
+        scan_move_player1(&status,name1);
         printf("-----------------------------------------------------------------------------------------------------------\n\n");
 
         //GAME LOGIC CHECK
 
         printf("--- Current Status ---\n");
-        display(arr);
+        display(&status);
         printf("*%s needs to touch both single stranded line.\n*%s needs to touch both double stranded line.\n",name1,name2);
         printf("Please use Ctrl+C to exit, since Game Logic is not ready.\n");            //To remove
-        scan_move_player2(arr,name2);
+        scan_move_player2(&status,name2);
         printf("-----------------------------------------------------------------------------------------------------------\n\n");
-
+        
         //GAME LOGIC CHECK
+    
     }
     
     return 0;

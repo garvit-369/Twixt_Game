@@ -1,16 +1,23 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "interface.h"
 
-void initialising_array(state *status) {
+void initialising_board(state *status) {
     for(int a=0;a<24;a++) {
         for(int b=0;b<24;b++) {
             (status->board)[a][b]=empty;
         }
     }
+    for(int i=0;i<24;i++) {
+        for(int j=0;j<24;j++) {
+            status->a[i][j].count=0;
+        }
+    }
+    for(int i=0;i<24;i++) {
+        for(int j=0;j<24;j++) {
+            status->b[i][j].count=0;
+        }
+    }
 }
+
 
 void display(state *status) {
     printf("\n");
@@ -90,49 +97,41 @@ void display(state *status) {
 
 }
 
-void scan_move_player1(state *status,char name_player1[]) {
-    char str[4];
-    printf("Play %s (O): ",name_player1);
-    scanf("%s",str);
+void scan_move(state *status,char name[],int *x,int *y) {
+    char str[6];
+    printf("Play %s (%c): ",name,status->player==p1?'O':'X');
+    scanf("%4s",str);
+    while ((getchar())!='\n');
 
     recheck:
     while(str[0]<'A' || str[0]>'X' || atoi(str+1)>24 || atoi(str+1)<1 || 
     (str[0]=='A' && (atoi(str+1)==1 || atoi(str+1)==24)) || (str[0]=='X' && (atoi(str+1)==1 || atoi(str+1)==24))) {
-        printf("Incorrect move. Please re-enter your move again: ");
+        printf("Incorrect move. Please enter your move again: ");
         scanf("%s",str);
+        while ((getchar())!='\n');
     }
-    int row=(int)(str[0]-'A');
-    int col=atoi(str+1)-1;
-
-    if ((status->board)[col][row]!='.') {
-        printf("Box is not empty, Please re-enter your move again: ");
+    int col=(int)(str[0]-'A');
+    int row=atoi(str+1)-1;
+    if ((status->board)[row][col]!='.') {
+        printf("Box is not empty, Please enter your move again: ");
         scanf("%s",str);
+        while ((getchar())!='\n');
+        goto recheck;
+    }
+    if((status->player==p1) && (col==0 || col==23)) {
+        printf("Can't plant your peg to opponents area, Please enter your move again: ");
+        scanf("%s",str);
+        while ((getchar())!='\n');
+        goto recheck;
+    }
+    if((status->player==p2) && (row==0 || row==23)) {
+        printf("Can't plant your peg to opponents area, Please enter your move again: ");
+        scanf("%s",str);
+        while ((getchar())!='\n');
         goto recheck;
     }
 
-    (status->board)[col][row]=p1_peg;
-}
-
-
-void scan_move_player2(state *status,char name_player2[]) {
-    char str[4];
-    printf("Play %s (X): ",name_player2);
-    scanf("%s",str);
-
-    recheck:
-    while(str[0]<'A' || str[0]>'X' || atoi(str+1)>24 || atoi(str+1)<1 || 
-    (str[0]=='A' && (atoi(str+1)==1 || atoi(str+1)==24)) || (str[0]=='X' && (atoi(str+1)==1 || atoi(str+1)==24))) {
-        printf("Incorrect move. Please re-enter your move again: ");
-        scanf("%s",str);
-    }
-    int row=(int)(str[0]-'A');
-    int col=atoi(str+1)-1;
-
-    if ((status->board)[col][row]!=empty) {
-        printf("Box is not empty, Please re-enter your move again: ");
-        scanf("%s",str);
-        goto recheck;
-    }
-
-    (status->board)[col][row]=p2_peg;
+    (status->board)[row][col]=(box_value)(status->player);
+    *x=col;
+    *y=row;
 }

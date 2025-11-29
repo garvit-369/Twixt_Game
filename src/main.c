@@ -1,10 +1,7 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <time.h>
-
 #include "toss.h"
 #include "interface.h"
+#include "logic.h"
+#include "structs.h"
 
 int main() {
 
@@ -36,31 +33,42 @@ int main() {
     printf("The board is set, the pieces are still... let the contest of wits begin!\n");
     printf("Get ready, %s!\n",name1);
     printf("Prepare yourself, %s!\n",name2);
+    printf("Press Enter to continue....");
+    getchar();
     printf("-----------------------------------------------------------------------------------------------------------\n\n");
     
-    state status;
-    initialising_array(&status);
 
-    while(1) {
+
+
+    state *status=malloc(sizeof(state));
+    initialising_board(status);
+
+    int count=0;
+    cordinate link[600]={0};
+
+    memset(link,-1,sizeof(link));
+    int x,y;
+    for(int a=0;;a=(a+1)%2) {
         printf("--- Current Status ---\n");
-        display(&status);
-        printf("*%s needs to touch both single stranded line.\n*%s needs to touch both double stranded line.\n",name1,name2);
-        printf("Please use Ctrl+C to exit, since Game Logic is not ready.\n");            //To remove
-        scan_move_player1(&status,name1);
-        printf("-----------------------------------------------------------------------------------------------------------\n\n");
+        status->player=(a==0)?p1:p2;
+        char *name=(a==0)?name1:name2;
 
-        //GAME LOGIC CHECK
-
-        printf("--- Current Status ---\n");
-        display(&status);
+        display(status);
         printf("*%s needs to touch both single stranded line.\n*%s needs to touch both double stranded line.\n",name1,name2);
-        printf("Please use Ctrl+C to exit, since Game Logic is not ready.\n");            //To remove
-        scan_move_player2(&status,name2);
-        printf("-----------------------------------------------------------------------------------------------------------\n\n");
+        scan_move(status,name,&x,&y);
+
+        link_check(status,link,&count,x,y);
         
-        //GAME LOGIC CHECK
-    
+        int dum=win_check(status,a);
+        if(dum==1) {
+            printf("%s WON the game!!!\n\n",name);
+            printf("-----------------------------------------------------------------------------------------------------------\n\n");
+            break;
+        }
+        printf("-----------------------------------------------------------------------------------------------------------\n\n");
     }
     
+
+    free(status);
     return 0;
 }

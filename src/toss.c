@@ -1,8 +1,3 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <time.h>
-
 #include "toss.h"
 
 void toss(char name1[], char name2[]) {
@@ -16,6 +11,7 @@ void toss(char name1[], char name2[]) {
         printf("Invalid choice. Please enter 0 for Heads or 1 for Tails: ");
         while (getchar() != '\n'); 
         scanf("%d",&choice);
+        while (getchar() != '\n'); 
     }
     printf("\nFlipping the coin...\n");
 

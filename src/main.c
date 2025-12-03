@@ -44,7 +44,7 @@ int main() {
     initialising_board(status);
 
     int count=0;
-    cordinate link[600]={0};
+    cordinate link[1500]={0};
 
     memset(link,-1,sizeof(link));
     int x,y;

@@ -38,7 +38,7 @@ int win_check(state *status, int player) {
 }
 
 int circling_way(int x1, int y1, int x2, int y2, int x3, int y3) {
-    int val=(y2-y1)*(x3-x2)-(x2-x1)*(y3-y2);
+    int val=(y3-y1)*(x2-x3)-(x3-x1)*(y2-y3);
     if (val==0) return 0;
     return (val>0)?1:2;
 }
@@ -50,8 +50,8 @@ int feasibility(int x1, int y1, int x2, int y2, cordinate *link_present) {
     int o3 = circling_way(link_present->x1, link_present->y1, link_present->x2, link_present->y2, x1, y1);
     int o4 = circling_way(link_present->x1, link_present->y1, link_present->x2, link_present->y2, x2, y2);
 
-    if (o1 != o2 && o3 != o4) return 0;
-    return 1;
+    if (o1 == o2 || o3 == o4) return 1;
+    return 0;
 }
 
 void link_check(state *status,cordinate link[],int *count,int x,int y) {
